@@ -38,25 +38,23 @@
 
   [answer]
 
-  (println "Please enter a number to take a guess!")
-
   (def user-input (read-line))
 
   (def user-guess (parse-int user-input))
 
-  (cond
+  (if
 
-    (= user-guess nil) (game-loop answer)
+   (= user-guess answer) (printf "You did it! The correct answer is: %s%n" answer)
 
-    (> user-guess answer) ((println "Too high!")
+   (do (cond
 
-                           (game-loop answer))
+         (= user-guess nil) (println "Please enter a number to take a guess!")
 
-    (< user-guess answer) ((println "Too low!")
+         (> user-guess answer) (println "Too high!")
 
-                           (game-loop answer))
+         (< user-guess answer) (println "Too low!"))
 
-    (= user-guess answer) (printf "You did it! The correct answer is: %s%n" answer)))
+       (game-loop answer))))
 
 (defn -main
 
@@ -66,8 +64,6 @@
 
   (def answer (init-answer 1 100))
 
-  (printf "The answer is %s%n" answer)
+  (println "Please enter a number to take a guess!")
 
-  (game-loop answer)
-
-  0)
+  (game-loop answer))
