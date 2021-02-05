@@ -6,16 +6,15 @@
 (defn make-board []
   [nil nil nil nil nil nil nil nil nil])
 
-(defn set-square [board i value]
-  (assoc board (- i 1) value))
-
 (defn get-square [board i]
   (get board (- i 1)))
 
-(def sides [:top :right :bottom :left])
-
-(defn choose-side []
-  (rand-nth sides))
+(defn set-square [board i value]
+  (if (some? (get-square board i))
+    (do
+      (println (format "trying to set %s but it has value %s" i (get-square board i)))
+      board)
+    (assoc board (- i 1) value)))
 
 (defn fill-empty-side [board]
   (set-square board (rand-nth [2 4 6 8]) "X"))
@@ -26,8 +25,11 @@
 (defn fill-centre-square [board]
   (set-square board 5 "X"))
 
+(defn has-empty-corner [board]
+  (some nil? (map #(get-square board %) [1 3 7 9])))
+
 (defn has-filled-corner [board]
-  (some #(= "O" %) (map #(get-square board %) '(1 3 7 9))))
+  (some #(= "O" %) (map #(get-square board %) [1 3 7 9])))
 
 (defn fill-opposite-corner [board]
   (set-square board (cond
@@ -49,7 +51,9 @@
     (let [user-input (read-line)
           i (parse-int user-input)]
       (game-loop (fill-user-input board i) "X"))
-    (game-loop (fill-empty-side board) "O")))
+    (if (has-empty-corner board)
+      (game-loop (fill-empty-corner board) "O")
+      (game-loop (fill-empty-side board) "O"))))
 
   ;; (def user-input (read-line))
   ;; (def user-guess (parse-int user-input))
