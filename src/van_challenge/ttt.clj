@@ -16,6 +16,18 @@
       board)
     (assoc board (- i 1) value)))
 
+(defn get-display-val [board i]
+  (let [value (get-square board i)]
+    (if (nil? value) "." value)))
+
+(defn print-board [board]
+  (printf "%s|%s|%s%n" (get-display-val board 1) (get-display-val board 2) (get-display-val board 3))
+  (println "-----")
+  (printf "%s|%s|%s%n" (get-display-val board 4) (get-display-val board 5) (get-display-val board 6))
+  (println "-----")
+  (printf "%s|%s|%s" (get-display-val board 7) (get-display-val board 8) (get-display-val board 9))
+  (println))
+
 (def corners [1 3 7 9])
 (def sides [2 4 6 8])
 
@@ -57,7 +69,9 @@
     (some #(is-won %) winning-positions)))
 
 (defn game-loop [board player]
-  (println board)
+  (println (format "> %s's turn" player))
+  (print-board board)
+  (println ">>>>>>")
   (cond
     (is-winner board "O") (println "O is the winner!")
     (is-winner board "X") (println "X is the winner!")
@@ -65,8 +79,8 @@
                          i (parse-int user-input)]
                      (game-loop (fill-user-input board i) "X"))
     :else (game-loop  (cond (has-empty-corner board) (fill-empty-corner board)
-                            :else (fill-empty-side board)
-                            "O"))))
+                            :else (fill-empty-side board))
+                      "O")))
 
   ;; (def user-input (read-line))
   ;; (def user-guess (parse-int user-input))
