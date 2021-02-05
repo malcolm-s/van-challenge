@@ -64,9 +64,9 @@
     (= player "O") (let [user-input (read-line)
                          i (parse-int user-input)]
                      (game-loop (fill-user-input board i) "X"))
-    :else (if (has-empty-corner board)
-             (game-loop (fill-empty-corner board) "O")
-             (game-loop (fill-empty-side board) "O"))))
+    :else (game-loop  (cond (has-empty-corner board) (fill-empty-corner board)
+                            :else (fill-empty-side board)
+                            "O"))))
 
   ;; (def user-input (read-line))
   ;; (def user-guess (parse-int user-input))
