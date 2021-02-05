@@ -50,15 +50,23 @@
   (try (Integer/parseInt number-string)
        (catch Exception e nil)))
 
+(def winning-positions [[1 2 3] [4 5 6] [7 8 9] [1 5 9] [3 5 7] [1 4 7] [2 5 8] [3 6 9]])
+
+(defn is-winner [board player]
+  (letfn [(is-won [pos] (every? #(= player (get-square board %)) pos))]
+    (some #(is-won %) winning-positions)))
+
 (defn game-loop [board player]
   (println board)
-  (if (= player "O")
-    (let [user-input (read-line)
-          i (parse-int user-input)]
-      (game-loop (fill-user-input board i) "X"))
-    (if (has-empty-corner board)
-      (game-loop (fill-empty-corner board) "O")
-      (game-loop (fill-empty-side board) "O"))))
+  (cond
+    (is-winner board "O") (println "O is the winner!")
+    (is-winner board "X") (println "X is the winner!")
+    (= player "O") (let [user-input (read-line)
+                         i (parse-int user-input)]
+                     (game-loop (fill-user-input board i) "X"))
+    :else ((if (has-empty-corner board)
+             (game-loop (fill-empty-corner board) "O")
+             (game-loop (fill-empty-side board) "O")))))
 
   ;; (def user-input (read-line))
   ;; (def user-guess (parse-int user-input))
