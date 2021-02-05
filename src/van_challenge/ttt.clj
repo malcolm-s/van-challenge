@@ -14,18 +14,17 @@
 (defn choose-side []
   (rand-nth sides))
 
-(defn fill-middle-square [side board player]
-  (case side
-    :top (set-square board 2 player)
-    :left (set-square board 4 player)
-    :right (set-square board 6 player)
-    :bottom (set-square board 8 player)))
-
 (defn fill-empty-side [board player]
-  (fill-middle-square (choose-side) board player))
+  (set-square board (rand-nth [2 4 6 8]) player))
+
+(defn fill-empty-corner [board player]
+  (set-square board (rand-nth [1 3 7 9]) player))
+
+(defn fill-centre-square [board player]
+  (set-square board 5 player))
 
 (defn main
   []
   (print-banner)
   (println (let [board (make-board)]
-             (fill-empty-side board "X"))))
+             (fill-centre-square board "X"))))
