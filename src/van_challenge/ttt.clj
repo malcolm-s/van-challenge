@@ -31,6 +31,13 @@
 (def corners [1 3 7 9])
 (def sides [2 4 6 8])
 
+(defn opposite-corner [corner]
+  (cond
+    (= 1 corner) 9
+    (= 3 corner) 7
+    (= 7 corner) 3
+    (= 9 corner) 1))
+(opposite-corner 3)
 (defn fill-empty-side [board]
   (let [empty-sides (filter #(nil? (get-square board %)) sides)]
     (set-square board (rand-nth empty-sides) "X")))
@@ -45,15 +52,18 @@
 (defn has-empty-corner [board]
   (some #(nil? (get-square board %)) corners))
 
+(defn available-opposite-corner [board]
+  (let [filled-corners (filter #(= "O" (get-square board %)) corners)
+        opposite-filled-corners (map #(opposite-corner %) filled-corners)
+        empty-opposite-filled-corners (filter #(nil? (get-square board %)) opposite-filled-corners)]
+    (first empty-opposite-filled-corners)))
+
 (defn has-filled-corner [board]
-  (some #(= "O" (get-square board %)) corners))
+  (not= nil (available-opposite-corner board)))
 
 (defn fill-opposite-corner [board]
-  (set-square board (cond
-                      (= "O" (get-square board 1)) 9
-                      (= "O" (get-square board 3)) 7
-                      (= "O" (get-square board 7)) 3
-                      (= "O" (get-square board 9)) 1) "X"))
+  (let [to-fill (available-opposite-corner board)]
+    (if (nil? to-fill) board (set-square board to-fill "X"))))
 
 (defn fill-user-input [board i]
   (set-square board i "O"))
@@ -78,7 +88,8 @@
     (= player "O") (let [user-input (read-line)
                          i (parse-int user-input)]
                      (game-loop (fill-user-input board i) "X"))
-    :else (game-loop  (cond (has-empty-corner board) (fill-empty-corner board)
+    :else (game-loop  (cond (has-filled-corner board) (fill-opposite-corner board)
+                            (has-empty-corner board) (fill-empty-corner board)
                             :else (fill-empty-side board))
                       "O")))
 
