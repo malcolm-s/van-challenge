@@ -37,7 +37,7 @@
     (= 3 corner) 7
     (= 7 corner) 3
     (= 9 corner) 1))
-(opposite-corner 3)
+
 (defn fill-empty-side [board]
   (let [empty-sides (filter #(nil? (get-square board %)) sides)]
     (set-square board (rand-nth empty-sides) "X")))
@@ -78,6 +78,12 @@
   (letfn [(is-won [pos] (every? #(= player (get-square board %)) pos))]
     (some #(is-won %) winning-positions)))
 
+(defn centre-empty? [board]
+  (nil? (get-square board 5)))
+
+(defn fill-centre [board]
+  (set-square board 5 "X"))
+
 (defn game-loop [board player]
   (println (format "> %s's turn" player))
   (print-board board)
@@ -88,21 +94,12 @@
     (= player "O") (let [user-input (read-line)
                          i (parse-int user-input)]
                      (game-loop (fill-user-input board i) "X"))
-    :else (game-loop  (cond (has-filled-corner board) (fill-opposite-corner board)
-                            (has-empty-corner board) (fill-empty-corner board)
-                            :else (fill-empty-side board))
+    :else (game-loop  (cond
+                        (centre-empty? board) (fill-centre board)
+                        (has-filled-corner board) (fill-opposite-corner board)
+                        (has-empty-corner board) (fill-empty-corner board)
+                        :else (fill-empty-side board))
                       "O")))
-
-  ;; (def user-input (read-line))
-  ;; (def user-guess (parse-int user-input))
-  ;; (if
-  ;;  (= user-guess answer) (printf "You did it! The correct answer is: %s%n" answer)
-  ;;  (do (cond
-  ;;        (= user-guess nil) (println "Please enter a number to take a guess!")
-  ;;        (> user-guess answer) (println "Too high!")
-  ;;        (< user-guess answer) (println "Too low!"))
-  ;;      (game-loop answer))))
-
 
 (defn main
   []
