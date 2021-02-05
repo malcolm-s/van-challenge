@@ -16,20 +16,25 @@
       board)
     (assoc board (- i 1) value)))
 
+(def corners [1 3 7 9])
+(def sides [2 4 6 8])
+
 (defn fill-empty-side [board]
-  (set-square board (rand-nth [2 4 6 8]) "X"))
+  (let [empty-sides (filter #(nil? (get-square board %)) sides)]
+    (set-square board (rand-nth empty-sides) "X")))
 
 (defn fill-empty-corner [board]
-  (set-square board (rand-nth [1 3 7 9]) "X"))
+  (let [empty-corners (filter #(nil? (get-square board %)) corners)]
+    (set-square board (rand-nth empty-corners) "X")))
 
 (defn fill-centre-square [board]
   (set-square board 5 "X"))
 
 (defn has-empty-corner [board]
-  (some nil? (map #(get-square board %) [1 3 7 9])))
+  (some #(nil? (get-square board %)) corners))
 
 (defn has-filled-corner [board]
-  (some #(= "O" %) (map #(get-square board %) [1 3 7 9])))
+  (some #(= "O" (get-square board %)) corners))
 
 (defn fill-opposite-corner [board]
   (set-square board (cond
