@@ -78,21 +78,27 @@
   (letfn [(is-won [pos] (every? #(= player (get-square board %)) pos))]
     (some #(is-won %) winning-positions)))
 
-(defn winnable? [board pos]
+(defn winnable? [board player pos]
   (let [pos-squares (map #(get-square board %) pos)
-        players-squares (filter #(= "X" %) pos-squares)
+        players-squares (filter #(= player %) pos-squares)
         empty-squares (filter nil? pos-squares)]
     (and (= 2 (count players-squares)) (= 1 (count empty-squares)))))
 
-(defn get-winning-square [board]
-  (let [winnable-position (first (filter #(winnable? board %) winning-positions))]
+(defn get-winning-square [board player]
+  (let [winnable-position (first (filter #(winnable? board player %) winning-positions))]
     (first (filter #(nil? (get-square board %)) winnable-position))))
 
 (defn can-win? [board]
-  (some #(winnable? board %) winning-positions))
+  (some #(winnable? board "X" %) winning-positions))
 
 (defn fill-winning-square [board]
-  (set-square board (get-winning-square board) "X"))
+  (set-square board (get-winning-square board "X") "X"))
+
+(defn can-opponent-win? [board]
+  (some #(winnable? board "O" %) winning-positions))
+
+(defn block-winning-square [board]
+  (set-square board (get-winning-square board "O") "X"))
 
 (defn centre-empty? [board]
   (nil? (get-square board 5)))
@@ -112,6 +118,7 @@
                      (game-loop (fill-user-input board i) "X"))
     :else (game-loop  (cond
                         (can-win? board) (fill-winning-square board)
+                        (can-opponent-win? board) (block-winning-square board)
                         (centre-empty? board) (fill-centre board)
                         (has-filled-corner board) (fill-opposite-corner board)
                         (has-empty-corner board) (fill-empty-corner board)
