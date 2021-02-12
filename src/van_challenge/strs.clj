@@ -7,8 +7,6 @@
 (defn word-count [value]
   (frequencies (str/split value #" ")))
 
-; (map (partial mod number) primes)) <- interesting
-
 (defn longest-line [value]
   (reduce
    #(if (> (count %1) (count %2)) %1 %2)
