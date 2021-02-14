@@ -1,6 +1,6 @@
 (ns van-challenge.strs-test
   (:require [clojure.test :refer :all]
-            [van-challenge.strs :refer :all]))
+            [van-challenge.strs :refer [first-word word-count longest-line char-groups]]))
 
 (deftest test-first-word
   (testing "single word"
@@ -16,7 +16,7 @@
   (testing "multiple words"
     (is (= (word-count "a a b") {"a" 2 "b" 1})))
   (testing "empty input"
-    (is (= (word-count "")) {"" 1})))
+    (is (= (word-count "") {"" 1}))))
 
 (deftest test-longest-line
   (testing "single line"
