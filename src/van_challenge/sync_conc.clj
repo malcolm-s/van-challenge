@@ -4,49 +4,40 @@
             [clojure.core.async :refer [close! chan >!! <!! >! <! go put! take! go-loop]]))
 
 (defn count-file-lines
+  ; 😍 this function
   [file]
   (-> file
       reader
       line-seq
       count))
 
-(defn sync-conc
+(defn count-file-lines-concurrent
   [file]
-  (let [line-chan (chan)]
-    ;; (doseq [line (line-seq (reader file))]
-    ;;   (printf "from reader>%s%n" line)
-    ;;   (put! line-chan line))
-    ;; (take! line-chan println)))
-    (go (doseq [line (line-seq (reader file))]
-          (printf "from reader>%s%n")
-          (close!)
-          (>! line-chan line)))
-    (go (while true (printf "from printer>%s%n" (<! line-chan))))))
-
-;; (<!! (sync-conc "README.md"))
+  (let [line-chan (chan)
+        done-chan (chan)]
+    ; start first go block to read each line and send it on the channel
+    ; then block wait for the total
+    (go
+      (doseq [line (line-seq (reader file))]
+        (>! line-chan line))
+      (close! line-chan)
+      (printf "reader:total=%s%n" (<! done-chan)))
+    ; start second go block to print each line from the channel, keeping a
+    ; total and then sending that
+    (go-loop [total 0]
+      (if-let [line (<! line-chan)]
+        (do
+          (printf "printer:%s%n" line)
+          (recur (inc total)))
+        (>! done-chan total)))))
 
 (defn main
   [args]
   (assert (= (count args) 1) "Must provide one argument <file to read>")
 
-  (let [in-file (first args)
-        line-chan (chan)
-        done-chan (chan)]
-    (go
-      (doseq [line (line-seq (reader in-file))]
-        (>! line-chan line))
-      (close! line-chan)
-      (printf "reader:%s%n" (<! done-chan)))
-    (<!! (go-loop []
-           (if-let [line (<! line-chan)]
-             (do
-               (printf "printer:%s%n" line)
-               (recur))
-             (>! done-chan "printing finished"))))))
-
-    ;; line-count (count-file-lines in-file)]
-    ;; (printf "Line count is: %s%n" line-count)))
-
-
-;; read lines
-;; send each line to 
+  (let [in-file (first args)]
+    (println ">>> SIMPLE LINE COUNT >>>")
+    (printf "Line count is: %s%n" (count-file-lines in-file))
+    (println ">>> CONCURRENT LINE COUNT >>>")
+    ; we need the <!! to make the program block until the loop is finished!
+    (<!! (count-file-lines-concurrent in-file))))
