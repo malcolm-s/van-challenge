@@ -9,6 +9,11 @@
       slurp
       read-csv))
 
+(defn parse-int
+  [n]
+  (try (Integer/parseInt n)
+       (catch NumberFormatException e nil)))
+
 (defn parse-float
   [n]
   (try (Float/parseFloat n)
@@ -50,9 +55,55 @@
                  :else totals))))
          {})))
 
+
+(defn score-diff
+  [{min :min max :max}]
+  (Math/abs (- max min)))
+
+(defn make-score-record
+  [row]
+  {:min (parse-int (get row 2))
+   :max (parse-int (get row 12))
+   :club (get row 0)})
+
+(defn is-valid-score-record
+  [{min :min max :max}]
+  (and (some? min) (some? max)))
+
+(defn rugby-scores-diff
+  []
+  (->>  (load-csv "resources/week6/data/rugby.csv")
+        (drop 1) ; skip header row
+        (map make-score-record)
+        (filter is-valid-score-record)
+        (reduce
+         (fn [totals row]
+           (if (and
+                (nil? (:biggest-diff-club totals))
+                (nil? (:smallest-diff-club totals)))
+             {:biggest-diff-club row
+              :smallest-diff-club row}
+             (let [diff (score-diff row)
+                   biggest-diff (score-diff (:biggest-diff-club totals))
+                   smallest-diff (score-diff (:smallest-diff-club totals))]
+               (cond
+                 (< biggest-diff diff) (assoc totals :biggest-diff-club row)
+                 (> smallest-diff diff) (assoc totals :smallest-diff-club row)
+                 :else totals))))
+         {})))
+
 (defn main
   [& args]
-  (let [weather (weather-diff)]
+  (let [ruggers (rugby-scores-diff)
+        weather (weather-diff)]
+    (println ">>> Rugby stats >>>")
+    (printf "Biggest score difference was for %s with difference of %s%n"
+            (get-in ruggers [:biggest-diff-club :club])
+            (score-diff (:biggest-diff-club ruggers)))
+    (printf "Smallest score difference was for %s with difference of %s%n"
+            (get-in ruggers [:smallest-diff-club :club])
+            (score-diff (:smallest-diff-club ruggers)))
+    
     (println ">>> Weather stats >>>")
     (printf "Biggest day difference was on %s with difference of %sC%n"
             (get-in weather [:biggest-diff-day :date])
