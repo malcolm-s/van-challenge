@@ -1,5 +1,6 @@
 (ns van-challenge.csv-data
-  (:require [clojure.data.csv :refer [read-csv]]))
+  (:require [clojure.data.csv :refer [read-csv]]
+            [clojure.string :as strs]))
 
 
 (defn load-csv
@@ -92,10 +93,24 @@
                  :else totals))))
          {})))
 
+(def get-sale-value (comp last first))
+(def get-transaction-value (comp last last))
+(def get-sale-id (comp first first))
+
+(defn accounting-errors
+  []
+  (let [sales-csv (load-csv "resources/week6/data/sales.csv")
+        transactions-csv (load-csv "resources/week6/data/transactions.csv")]
+    (->> (map vector sales-csv transactions-csv) ; zip the sequences together
+         (drop 1)
+         (filter #(not= (get-sale-value %) (get-transaction-value %)))
+         (map get-sale-id))))
+
 (defn main
   [& args]
   (let [ruggers (rugby-scores-diff)
-        weather (weather-diff)]
+        weather (weather-diff)
+        acc-errors (accounting-errors)]
     (println ">>> Rugby stats >>>")
     (printf "Biggest score difference was for %s with difference of %s%n"
             (get-in ruggers [:biggest-diff-club :club])
@@ -103,11 +118,15 @@
     (printf "Smallest score difference was for %s with difference of %s%n"
             (get-in ruggers [:smallest-diff-club :club])
             (score-diff (:smallest-diff-club ruggers)))
-    
+
     (println ">>> Weather stats >>>")
     (printf "Biggest day difference was on %s with difference of %sC%n"
             (get-in weather [:biggest-diff-day :date])
             (temp-diff (:biggest-diff-day weather)))
     (printf "Smallest day difference was on %s with difference of %sC%n"
             (get-in weather [:smallest-diff-day :date])
-            (temp-diff (:smallest-diff-day weather)))))
+            (temp-diff (:smallest-diff-day weather)))
+    
+    (println ">>> Accounting >>>")
+    (printf "Total of %s accounting errors%n" (count acc-errors))
+    (printf "IDs of first 5 errors: %s%n" (strs/join ", " (take 5 acc-errors)))))
