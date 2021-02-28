@@ -61,32 +61,36 @@ A player can play a perfect game of tic-tac-toe (to win or at least draw) if, ea
 # 4 - String Shenanigans
 
 This week is a set of small string processing challenges to get us used to using string and text in our chosen languages. Thanks to Jim for this idea!
-* Get the first word in a string.
-* Count the most common words in a string.
-* Output the longest line in a string.
-  * Bonus: Output all of the longest lines if there's a tie.
-* Output groups of characters as they appear in a string. So "hello old wool" would be output as "h, e, ll, o, , o, l, d, , w, oo, l".
-* Get the substring of a string.
-* Replace all occurrences of a character in a string with another.
-  * Bonus: Allow the replacement to be a string rather than a character. The replacement string can be of any length.
-* Match a string against a regex pattern (Usage of libraries is allowed!)
-* Substitute part of a string using a regex pattern (Usage of libraries is allowed!)
+
+- Get the first word in a string.
+- Count the most common words in a string.
+- Output the longest line in a string.
+  - Bonus: Output all of the longest lines if there's a tie.
+- Output groups of characters as they appear in a string. So "hello old wool" would be output as "h, e, ll, o, , o, l, d, , w, oo, l".
+- Get the substring of a string.
+- Replace all occurrences of a character in a string with another.
+  - Bonus: Allow the replacement to be a string rather than a character. The replacement string can be of any length.
+- Match a string against a regex pattern (Usage of libraries is allowed!)
+- Substitute part of a string using a regex pattern (Usage of libraries is allowed!)
 
 Hard mode (these may not apply to all of the above problems, and may not apply to your chosen language!):
-* Be wary of the encoding of the strings in the above problems (ie support unicode). Try with UTF-8 and UTF-16 encodings.
-* Do not use numerical comparisons in the above problems. Using equality is okay, but do not compare the length of a string.
-* Do not use lists in the above problems.
-* Do not use arithmetic operators in the above problems. (So no ++ or i += 1!).
 
-"Just for Jim" (a separate problem to choose from if you want something bigger): 
-* Implement one or more edit distance algorithms as described here: https://en.wikipedia.org/wiki/Edit_distance
+- Be wary of the encoding of the strings in the above problems (ie support unicode). Try with UTF-8 and UTF-16 encodings.
+- Do not use numerical comparisons in the above problems. Using equality is okay, but do not compare the length of a string.
+- Do not use lists in the above problems.
+- Do not use arithmetic operators in the above problems. (So no ++ or i += 1!).
+
+"Just for Jim" (a separate problem to choose from if you want something bigger):
+
+- Implement one or more edit distance algorithms as described here: https://en.wikipedia.org/wiki/Edit_distance
 
 We like this one because it covers:
-* How to use strings and text.
-* Calling functions.
-* Using maps/dicts.
 
-# 5 - Input and/or synchronous concurrency #
+- How to use strings and text.
+- Calling functions.
+- Using maps/dicts.
+
+# 5 - Input and/or synchronous concurrency
 
 We've split this one into parts, the idea being they scale depending on how much time you have/what language you've chosen.
 
@@ -95,14 +99,17 @@ We've split this one into parts, the idea being they scale depending on how much
 Given a file path from the command line, read the file and count the number of lines it contains.
 
 You could:
-* Pick one of the string problems from last week to run on the lines.
-* Add a command line flags to select the string processing to be run, by default the program will print the number of lines.
+
+- Pick one of the string problems from last week to run on the lines.
+- Add a command line flags to select the string processing to be run, by default the program will print the number of lines.
 
 This covers:
-* Arguments.
-* Reading in files.
+
+- Arguments.
+- Reading in files.
 
 ## Part Two - Concurrency!
+
 Part one but with concurrency!
 
 https://rosettacode.org/wiki/Synchronous_concurrency
@@ -112,16 +119,18 @@ One of the concurrent units (the reading unit) will read from a given file and s
 The printing unit must count the number of lines it prints, after the reading unit sends its last line to the printing unit, the reading unit will request the number of lines printed by the printing unit, which it will then print (gasp, even though it is a reading unit).
 
 This covers:
-* Learning how to create threads.
-* Communication between threads (put/get).
-* Cleanly terminating the threads.
-* Threads.
+
+- Learning how to create threads.
+- Communication between threads (put/get).
+- Cleanly terminating the threads.
+- Threads.
 
 ## "Just for Jim" - More Concurrency
 
 Expand on part two, you could:
-* Add a third unit that queries the reading and printing unit to calculate the current progress of the file processing.
-* Implement a system such that there is a main thread that organises the two (or more) workers.
+
+- Add a third unit that queries the reading and printing unit to calculate the current progress of the file processing.
+- Implement a system such that there is a main thread that organises the two (or more) workers.
 
 # 6 - Data Science with CSV files
 
@@ -138,7 +147,6 @@ for a team and against them respectively.
 Write a program to read the file and print the teams with the smallest
 and biggest differences in tries scored for and against them.
 
-
 ### Weather
 
 weather.csv contains the weather data for Whistler Roundhouse in 2020.
@@ -150,12 +158,12 @@ and biggest differences in temperature on a day.
 
 Tips:
 
-* If you have trouble with the unicode in the column headers then feel free to edit that out.
-* If you have trouble with the quoting in the file then feel free to edit that out.
+- If you have trouble with the unicode in the column headers then feel free to edit that out.
+- If you have trouble with the quoting in the file then feel free to edit that out.
 
 Bonus:
-* Try to write the code such that you can use the same functions for the rugby and weather data.
 
+- Try to write the code such that you can use the same functions for the rugby and weather data.
 
 ### Detecting Accounting Errors
 
@@ -172,17 +180,18 @@ errors.csv contains the correct list of erroneous transactions
 for you to validate against.
 
 Bonus:
-* Calculate the percentage of incorrect transactions.
-* Calculate the amount of money gained or lost to errors.
-* Calculate which staff member makes the most mistakes.
-    * Calculate which staff member makes the most mistakes as
-      a percentage of their total sales and fire them!
-* Try to solve the problem without using the transaction ID from the bank transactions.
-* If your chosen language has such a type, use a "decimal" type to calculate
+
+- Calculate the percentage of incorrect transactions.
+- Calculate the amount of money gained or lost to errors.
+- Calculate which staff member makes the most mistakes.
+  - Calculate which staff member makes the most mistakes as
+    a percentage of their total sales and fire them!
+- Try to solve the problem without using the transaction ID from the bank transactions.
+- If your chosen language has such a type, use a "decimal" type to calculate
   the amount of money lost or gained to errors,
   so that you do not accumulate floating point errors!
   For example, Python has https://docs.python.org/3/library/decimal.html.
 
 ### Bonuses
 
-* Read the data out of the associated json files for each problem instead of the csv files.
+- Read the data out of the associated json files for each problem instead of the csv files.
